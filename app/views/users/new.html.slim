@@ -1,0 +1,26 @@
+h1 新規ユーザー登録
+
+= form_with model: @user, local: true do |form|
+  - if @user.errors.any?
+    #error_explanation
+      h2
+        = pluralize(@user.errors.count, "error")
+        | "が発生しました:"
+      ul
+        - @user.errors.full_messages.each do |message|
+          li = message
+
+  .form-group
+    = form.label :name, "name", class: "text-white"
+    = form.text_field :name, class: 'form-control'
+
+  .form-group
+    = form.label :company, "company", class: "text-white"
+    = form.text_field :company, class: 'form-control'
+
+  .form-group
+    = form.label :user_type, "user_type", class: "text-white"
+    = form.select :user_type, options_for_select([['agent', 'agent'], ['custumer', 'custumer'], ['vender', 'vender']]), {}, class: 'form-control'
+
+  .actions
+    = form.submit "登録する", class: 'btn btn-primary'

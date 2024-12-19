@@ -1,0 +1,66 @@
+
+
+
+div.flex-1.p-4.overflow-y-auto
+  div.text-white.mb-6
+    div.flex.items-center.justify-between.mb-4
+      h1.text-2xl.font-bold project list
+      button.text-gray-400.hover:text-white
+        i.fas.fa-edit
+
+
+    div.mt-4.flex.flex-wrap.gap-2
+      span class="bg-[#363636] px-3 py-1 rounded-full text-sm" making tacos
+      span class="bg-[#363636] px-3 py-1 rounded-full text-sm" eating tacos
+      span class="bg-[#363636] px-3 py-1 rounded-full text-sm" enjoying tacos
+
+  div.text-white
+    div.flex.items-center.justify-between.mb-4
+      h2.text-xl タスク
+      = link_to "プロジェクトを追加", tasks_path(modal: true), class: "bg-blue-500 px-4 py-2 rounded text-white"
+
+    div.grid.grid-cols-1.md:grid-cols-2.gap-4
+      - @tasks.each_with_index do |task, index|
+        = link_to task_path(task), class: "bg-[#2d2d2d] p-4 rounded-lg hover:bg-[#363636] transition-colors" do
+          div.flex.items-center.justify-between
+            div.flex.items-center
+              div.text-2xl.mr-3= task[:status] == "completed" ? "✅" : "📋"
+              div
+                div.font-medium= task[:name]
+                div.text-sm.text-gray-400= task[:date]
+                div.text-sm.text-gray-400= task[:overview]
+            button.text-gray-400.hover:text-white(onclick="onTaskStatusChange(#{index})")
+              = task[:status] == "completed" ? "未完了に戻す" : "完了にする"
+
+= turbo_frame_tag "modal" do
+  - if @is_modal_open
+    div(class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center")
+      div(class="bg-[#2d2d2d] p-6 rounded-lg w-[500px]")
+        h3.text-white.text-xl.mb-4 新しいタスク
+        /エラー発生時
+        - if @task.errors.any?
+          div.bg-red-100.text-red-600.p-4.rounded.mb-4
+            ul
+              - @task.errors.full_messages.each do |message|
+                li= message
+
+        = form_with model: Task.new, url: tasks_path, local: true do |f|
+          div.space-y-4
+            div
+              = f.label :name, "タスク名", class: "block text-gray-600 mb-2"
+              = f.text_field :name, class: "w-full px-3 py-2 border rounded"
+            div
+              = f.label :overview, "概要", class: "block text-gray-600 mb-2"
+              = f.text_area :overview, class: "w-full px-3 py-2 border rounded"
+            div 
+              = f.label :user_type, "your position", class: "block text-gray-600 mb-2"
+              = select_tag :user_type, options_for_select([["Agent", "agent"], ["Client", "client"]]), class: "w-full px-3 py-2 border rounded"
+            div.flex.justify-end.gap-2
+              = link_to "キャンセル", tasks_path, class: "px-4 py-2 bg-gray-300 text-gray-700 rounded"
+              = f.submit "追加", class: "px-4 py-2 bg-blue-500 text-white rounded"
+  - else
+    div(class="hidden")
+
+
+- content_for :page_specific_javascript do
+  = javascript_pack_tag 'tasks/index'

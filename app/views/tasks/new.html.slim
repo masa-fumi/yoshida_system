@@ -1,0 +1,34 @@
+h1 新しいタスクを作成
+
+= form_with model: @task, local: true do |form|
+  - if @task.errors.any?
+    #error_explanation
+      h2
+        = pluralize(@task.errors.count, "error")
+        | "が発生しました:"
+      ul
+        - @task.errors.full_messages.each do |message|
+          li = message
+
+  .form-group
+    = form.label :name, '名前'
+    = form.text_field :name, class: 'form-control'
+
+  .form-group
+    = form.label :overview, '概要'
+    = form.text_area :overview, class: 'form-control'
+
+  .form-group
+    = form.label :user_id, 'ユーザーID'
+    = form.number_field :user_id, class: 'form-control'
+
+  .form-group
+    = form.label :user_ids, 'ユーザーIDs'
+    = form.text_area :user_ids, class: 'form-control'
+
+  .form-group
+    = form.label :type, 'タイプ'
+    = form.text_field :type, class: 'form-control'
+
+  .actions
+    = form.submit '作成', class: 'btn btn-primary'
